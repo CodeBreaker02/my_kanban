@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:my_kanban/constants/colors.dart';
+import 'package:my_kanban/widgets/todo_item.dart';
+
+import '../model/todo.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-int tmp = 5;
+final todoLists = ToDo.todoList();
+
+final tmp = ToDo.todoList().length;
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
@@ -43,33 +47,46 @@ class _HomePageState extends State<HomePage> {
                 child: Text('$tmp tasks', style: const TextStyle(color: primaryT, fontWeight: FontWeight.w500, fontSize: 16),),
               ),
               searchBox(),
+              Expanded(
+                  child: ListView(
+                    children: [
+                      for (ToDo todo in todoLists)
+                        TodoItem(todo: todo, onTodoDone: _setIsDone,)
+                    ],
+                  ))
             ],
           )
       ),
     );
   }
+  void _setIsDone(ToDo todo) {
+    setState(() {
+      todo.isDone = !todo.isDone;
+    });
+  }
+
+  Widget searchBox() {
+    return Container(
+      // search bar
+      height: 50,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: const TextField(
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          prefixIcon: Icon(Icons.search, color: primaryT,),
+          prefixIconConstraints: BoxConstraints(
+            minWidth: 40,
+            minHeight: 40,
+          ),
+          hintText: 'Search',
+          hintStyle: TextStyle(color: primaryT, fontWeight: FontWeight.w500, fontSize: 16),
+        ),
+      ),
+    );
+  }
 }
 
-Widget searchBox() {
-  return Container(
-    // search bar
-    height: 50,
-    width: double.infinity,
-    decoration: BoxDecoration(
-      color: Colors.grey[200],
-      borderRadius: BorderRadius.circular(18),
-    ),
-    child: const TextField(
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        prefixIcon: Icon(Icons.search, color: primaryT,),
-        prefixIconConstraints: BoxConstraints(
-          minWidth: 40,
-          minHeight: 40,
-        ),
-        hintText: 'Search',
-        hintStyle: TextStyle(color: primaryT, fontWeight: FontWeight.w500, fontSize: 16),
-      ),
-    ),
-  );
-}
